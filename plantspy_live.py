@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import cv2
-import StringIO
-import numpy
+from io import StringIO # update for python3
+# import numpy double entry?
 import logging
 import numpy as np
 import imutils
@@ -9,7 +9,7 @@ import datetime
 import time
 from os import uname
 from PIL import Image
-from pylepton import Lepton
+from pylepton import Lepton # https://github.com/groupgets/pylepton
 from traceback import format_exc
 from influxdb import InfluxDBClient
 from threading import Thread, Lock
@@ -21,8 +21,8 @@ RESIZE_X = 800
 RESIZE_Y = 600
 
 #TODO: Move these to config file
-INFLUX_IP    = '127.0.0.1'
-INFLUX_PORT  = 8086
+INFLUX_IP    = '0.0.0.0'
+INFLUX_PORT  = 5000
 INFLUX_USER  = 'user'
 INFLUX_PASS  = 'password'
 INFLUX_DB    = 'database'
@@ -125,7 +125,7 @@ class IRCamHandler:
         cv2.waitKey(1)
 
 
-def capture(flip_v=False, device="/dev/spidev0.1"):
+def capture(flip_v=False, device="/dev/spidev0.0"): # update for the BBG and /boot/uEnv.txt should show BB-SPIDEV0-00A0.dtbo for overlays!
     with Lepton(device) as l:
         data, _ = l.capture()
 
