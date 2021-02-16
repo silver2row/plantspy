@@ -1,33 +1,33 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import cv2
-import StringIO
-import numpy
+from io import StringIO # use this updated 'from io' section for python3 and/or python 3.7.x
+# import numpy >>> sudo apt install python3-numpy on debian buster w/ the beagleboard.org image(s)... 
 import logging
 import numpy as np
-import imutils
+import imutils # I could not find this imutils in the debian buster repos under python3-imutils. So, use pip3.
 import datetime
 import time
 from os import uname
 from PIL import Image
-from pylepton import Lepton
+from pylepton import Lepton # https://github.com/groupgets/pylepton
 from traceback import format_exc
-from influxdb import InfluxDBClient
-from SocketServer import ThreadingMixIn
-from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
+from influxdb import InfluxDBClient # influxdb is on debian buster and can be installed w/ apt install influxdb
+from socketserver import ThreadingMixIn # update to 'from socketserver' for pyton3.7.x
+from http.server import BaseHTTPRequestHandler, HTTPServer # update to http.server for python3.7.x
 
 # import the necessary packages
-from picamera.array import PiRGBArray
-from picamera import PiCamera
+from picamera.array import PiRGBArray # I cannot find a way around this yet for beagleboard.org boards
+from picamera import PiCamera # This either...
 
-LEP_WIDTH = 80
-LEP_HEIGHT = 60
+LEP_WIDTH = 800
+LEP_HEIGHT = 600
 
 RESIZE_X = 800
 RESIZE_Y = 600
 
 #TODO: Move these to config file
-INFLUX_IP    = '127.0.0.1'
-INFLUX_PORT  = 8086
+INFLUX_IP    = '0.0.0.0'
+INFLUX_PORT  = 5000
 INFLUX_USER  = 'user'
 INFLUX_PASS  = 'password'
 INFLUX_DB    = 'database'
@@ -116,7 +116,7 @@ class IRCamHandler(BaseHTTPRequestHandler):
 
                 # Build MJPG image
                 jpg = Image.fromarray(rgb_img)
-                tmpFile = StringIO.StringIO()
+                tmpFile = io.StringIO()
                 jpg.save(tmpFile, 'JPEG')
                 self.wfile.write("--jpgboundary")
                 self.send_header('Content-type', 'image/jpeg')
@@ -153,7 +153,7 @@ def transparentOverlay(src , overlay , pos=(0,0),scale = 1):
 
 
 
-def capture_ir(flip_v=False, device="/dev/spidev0.1"):
+def capture_ir(flip_v=False, device="/dev/spidev0.0"): # add the BB-SPIDEV0-00A0.dtbo for beaglebone green!
     with Lepton(device) as l:
         data, _ = l.capture()
 
